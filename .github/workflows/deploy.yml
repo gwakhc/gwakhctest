@@ -1,4 +1,4 @@
-name: FTP Deploy (connectivity test)
+name: FTP Deploy
 
 on:
   push:
@@ -11,15 +11,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Test FTP connectivity only
+      - name: Upload via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp      # ? FTPS 말고 'ftp'로 테스트
+          protocol: ftp
           port: 21
           local-dir: ./
-          server-dir: /www/  # 모르면 일단 '/'로 바꿔도 됨
-          dry-run: true      # ? 파일은 안 올리고 연결/목록만 확인
+          server-dir: /www/       # 실제 업로드될 서버 경로 (필요시 수정)
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
           log-level: verbose
