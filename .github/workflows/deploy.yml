@@ -3,6 +3,7 @@ name: FTP Deploy
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch: {}   # 수동 실행 버튼도 추가됨
 
 jobs:
   deploy:
@@ -12,17 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Upload to hosting via FTP
+      - name: Upload to hosting via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
+          protocol: ftps
           port: 21
-          local-dir: ./
-          server-dir: /www/
+          local-dir: ./               # 올릴 로컬 폴더
+          server-dir: /www/           # 호스팅 웹 루트 경로 (필요 시 public_html 로 수정)
           exclude: |
             **/.git*
             **/.github/**
             **/node_modules/**
+            **/*.map
+          log-level: verbose
